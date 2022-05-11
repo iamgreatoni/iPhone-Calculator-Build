@@ -40,15 +40,62 @@ const numberArray = [
 
 //hourVar.textContent = '20';
 
+/*const number = document.getElementsByClassName("number")
+const numberVar = [].slice.call(number);*/
+
+/*const getDisplay = () => {
+   const currentDisplay = displayVar.innerHTML;
+    return currentDisplay.split(',').join('');
+};*/
+
+const getDisplay = () => displayVar.innerHTML.split(',').join('');
+
+const getDisplayNum = () => {
+    return parseFloat(getDisplay());
+};
+
+const setDisplay = (DisplayString) => {
+    displayVar.innerHTML = 
+    parseFloat(DisplayString).toLocaleString();
+};
 
 
+const handleNumberClick = (e)=> {
+    const currentDisplay = getDisplay();
+    if (currentDisplay === '0'){
+        setDisplay(e.innerHTML);
+    } else {
+        setDisplay(currentDisplay + e.innerHTML);
+    }
+}; 
 
-numberArray.forEach( (i) => {
-    i.addEventListener("click", () => {
-        const currentDisplay = displayVar.innerHTML;
-        displayVar.innerHTML = currentDisplay + i;
-    })
+
+numberArray.forEach( function (i,){ 
+    i.addEventListener("click", function(){
+        handleNumberClick(i);
+    });
+    
 });
+
+
+
+decimalVar.addEventListener("click", function(){
+    const currentDisplay = getDisplay();
+    if(!currentDisplay.includes('.')){
+        setDisplay(currentDisplay + '.');
+    }
+ });
+
+
+
+/*for (let i=0; i < numberArray.length; i++ ){
+    const numberVar = numberArray[i];
+    numberVar.addEventListener('click', ()=> {
+        handleNumberClick(i.toString());
+    });
+}*/
+
+
 
 const timeUpdate = (() => {
     const currentTime = new Date();
