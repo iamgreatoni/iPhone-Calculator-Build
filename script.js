@@ -38,6 +38,12 @@ const numberArray = [
     number9
 ];
 
+
+let valueStringInMemory = null;
+let operatorInMemory = null;
+
+
+
 //hourVar.textContent = '20';
 
 /*const number = document.getElementsByClassName("number")
@@ -55,8 +61,19 @@ const getDisplayNum = () => {
 };
 
 const setDisplay = (DisplayString) => {
+    if (DisplayString[DisplayString.length - 1] === '.') {
+        displayVar.innerHTML += '.';
+        return;
+    }
+
+    const [wholeNumString, decimalString] = DisplayString.split('.');
+    if (decimalString) {
     displayVar.innerHTML = 
-    parseFloat(DisplayString).toLocaleString();
+        parseFloat(wholeNumString).toLocaleString() + '.' + decimalString;
+    } else {
+    displayVar.innerHTML = 
+        parseFloat(wholeNumString).toLocaleString();
+    };
 };
 
 
@@ -69,22 +86,108 @@ const handleNumberClick = (e)=> {
     }
 }; 
 
+const performOperations = ()=> {
+    const valueNumInMemory = parseFloat(valueStringInMemory);
+    const value = getDisplayNum();
+    let newValueNum; 
+    if (operatorInMemory === 'addition'){
+    newValueNum = valueNumInMemory + value 
+    } else if (operatorInMemory === 'subtraction'){
+    newValueNum = valueNumInMemory - value 
+    } else if (operatorInMemory === 'multiplication'){
+    newValueNum = valueNumInMemory * value 
+    } else if (operatorInMemory === 'division'){
+    newValueNum = valueNumInMemory / value 
+    }
 
-numberArray.forEach( function (i,){ 
-    i.addEventListener("click", function(){
+    return newValueNum.toString();
+}
+
+
+const handleOperatorClick = (o)=> {
+    const currentDisplay = getDisplay();
+    if (!valueStringInMemory){
+        valueStringInMemory = currentDisplay;
+        operatorInMemory = o;
+        setDisplay('0');
+        return;
+    }
+    valueStringInMemory = performOperations();
+    operatorInMemory = o;
+    setDisplay('0');
+};
+
+
+
+
+
+acVar.addEventListener('click', ()=>{
+    setDisplay('0');
+    valueStringInMemory = null;
+     operatorInMemory = null;
+});
+
+pmVar.addEventListener('click', ()=>{
+    const value = getDisplayNum();
+    const currentDisplay = getDisplay();
+    if (value >= 0){
+        setDisplay('-' + currentDisplay.toString());
+    } else {
+        setDisplay(currentDisplay.substring(1));
+    }
+});
+
+percentVar.addEventListener('click', ()=>{
+    const value = getDisplayNum();
+    const newValue = value / 100;
+    setDisplay(newValue.toString());
+});
+
+
+numberArray.forEach( (i)=>{ 
+    i.addEventListener('click', ()=>{
         handleNumberClick(i);
     });
     
 });
 
 
-
-decimalVar.addEventListener("click", function(){
+decimalVar.addEventListener('click', function(){
     const currentDisplay = getDisplay();
     if(!currentDisplay.includes('.')){
         setDisplay(currentDisplay + '.');
     }
- });
+});
+
+
+
+
+
+divisionVar.addEventListener('click', ()=> {
+    handleOperatorClick('division');
+});
+
+additionVar.addEventListener('click', ()=> {
+    handleOperatorClick('addition');
+});
+
+subtractionVar.addEventListener('click', ()=> {
+    handleOperatorClick('subtraction');
+});
+
+multiplicationVar.addEventListener('click', ()=> {
+    handleOperatorClick('multiplication');
+});
+
+equalVar.addEventListener('click', ()=> {
+    if (valueStringInMemory){
+       setDisplay(performOperations());
+       valueStringInMemory = null;
+       operatorInMemory = null;
+    }
+
+});
+
 
 
 
@@ -111,6 +214,6 @@ const timeUpdate = (() => {
     minuteVar.textContent = currentMinute.toString().padStart(2, '0');
 }); 
 
-
 setInterval(timeUpdate, 1000);
 timeUpdate();
+
